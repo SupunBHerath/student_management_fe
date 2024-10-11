@@ -5,7 +5,7 @@ import StudentDetailsTable from "../components/Table/StudentDetailsTable";
 
 export default function Home() {
   return (
-    <div className="container  p-5 shadow-lg">
+    <div className="container  p-5 mt-5">
       <div className="text-center">
         <h1>Student Management System </h1>
       </div>

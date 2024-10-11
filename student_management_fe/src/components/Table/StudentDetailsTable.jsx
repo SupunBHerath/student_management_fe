@@ -1,4 +1,3 @@
-// src/components/News/NewsFeedT.js
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -15,9 +14,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getStudentData } from "../../API/StudentData/getStudentData";
 import { deleteStudent } from "../../API/StudentData/deleteStudent";
+import { message } from "antd";
+import EditForm from "../EditeComponents/EditeForm";
 
 const StudentDetailsTable = () => {
   const [students, setStudents] = useState([]);
+  const [editingStudent, setEditingStudent] = useState(null); // State to store student being edited
+  const [openEditForm, setOpenEditForm] = useState(false); // State to control dialog visibility
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -31,15 +34,28 @@ const StudentDetailsTable = () => {
 
     fetchStudentData();
   }, []);
-  const handleDelete = async (id) => {
 
+  const handleDelete = async (id) => {
     try {
       await deleteStudent(id);
-      alert("Student deleted");
+      setStudents(students.filter(student => student.student_id !== id));
+      message.success("Student deleted successfully.");
+      window.location.reload();
     } catch (e) {
-      console.log("error deleting student");
+      message.error("Failed to delete student.");
     }
   };
+
+  const handleEdit = (student) => {
+    setEditingStudent(student); 
+    setOpenEditForm(true);
+  };
+
+  const handleEditFormClose = () => {
+    setOpenEditForm(false); 
+    setEditingStudent(null);
+  };
+
   return (
     <div>
       <TableContainer
@@ -61,9 +77,12 @@ const StudentDetailsTable = () => {
                 <TableRow key={student.student_id}>
                   <TableCell>{student.name}</TableCell>
                   <TableCell>{student.age}</TableCell>
-                  <TableCell>{student.address}</TableCell>
+                  <TableCell>{student.g_address}</TableCell>
                   <TableCell>
-                    <IconButton color="primary">
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEdit(student)}
+                    >
                       <EditIcon />
                     </IconButton>
                     <IconButton
@@ -83,6 +102,20 @@ const StudentDetailsTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {editingStudent && (
+        <EditForm
+        id={editingStudent.student_id}
+          name={editingStudent.name}
+          age={editingStudent.age}
+          contact={editingStudent.contact}
+          g_name={editingStudent.g_name}
+          g_address={editingStudent.g_address}
+          g_contact={editingStudent.g_contact}
+          open={openEditForm}
+          onClose={handleEditFormClose} 
+        />
+      )}
     </div>
   );
 };

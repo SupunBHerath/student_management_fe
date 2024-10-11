@@ -10,62 +10,52 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import { createStudent } from "../../API/StudentData/addStudentData";
 import { message } from "antd";
+import { updateStudent } from "../../API/StudentData/updateStudentData";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function RegisterForm() {
-  const [open, setOpen] = React.useState(false);
-  const [newStudent, setNewStudent] = React.useState({
-    name: "",
-    age: "",
-    contact: "",
-    image_url: "imge",
-    g_name: "",
-    g_address: "",
-    g_contact: "",
+export default function EditForm({open , onClose, id,name,age ,contact,image_url,g_name,g_address,g_contact}) {
+  const [editStudent, seteditStudent] = React.useState({
+    id:id,
+    name: name,
+    age: age,
+    contact: contact,
+    image_url: 'image',
+    g_name: g_name,
+    g_address: g_address,
+    g_contact: g_contact,
   });
 
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const handleInputChange = (field, value) => {
-    setNewStudent((prev) => ({ ...prev, [field]: value }));
+    seteditStudent((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleFileChange = (event) => {
-    setNewStudent((prev) => ({ ...prev, imageurl: event.target.files[0] }));
+    seteditStudent((prev) => ({ ...prev, imageurl: event.target.files[0] }));
   };
 
-  const handleRegister = async () => {
+  const handleUpdate = async () => {
     try {
-      await createStudent(newStudent);
+      await updateStudent(editStudent.id, editStudent);
       window.location.reload();
 
     } catch (e) {
       console.error(e);
-      alert("Failed to register student. Please try again later.");
     }
-    console.log("Form data will not be submitted");
-    setOpen(false);
   };
 
   return (
     <React.Fragment>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Student Register
-      </Button>
+    
       <Dialog
         open={open}
         TransitionComponent={Transition}
         keepMounted
-        onClose={handleClose}
+        onClose={onClose}
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogContent>
@@ -78,7 +68,7 @@ export default function RegisterForm() {
                   label="Name"
                   variant="outlined"
                   fullWidth
-                  value={newStudent.name}
+                  value={editStudent.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
                 />
               </Grid>
@@ -87,7 +77,7 @@ export default function RegisterForm() {
                   label="Age"
                   variant="outlined"
                   fullWidth
-                  value={newStudent.age}
+                  value={editStudent.age}
                   onChange={(e) => handleInputChange("age", e.target.value)}
                 />
               </Grid>
@@ -96,7 +86,7 @@ export default function RegisterForm() {
                   label="Contact"
                   variant="outlined"
                   fullWidth
-                  value={newStudent.contact}
+                  value={editStudent.contact}
                   onChange={(e) => handleInputChange("contact", e.target.value)}
                 />
               </Grid>
@@ -107,7 +97,7 @@ export default function RegisterForm() {
                   label="Name"
                   variant="outlined"
                   fullWidth
-                  value={newStudent.g_name}
+                  value={editStudent.g_name}
                   onChange={(e) => handleInputChange("g_name", e.target.value)}
                 />
               </Grid>
@@ -116,7 +106,7 @@ export default function RegisterForm() {
                   label="Adddress"
                   variant="outlined"
                   fullWidth
-                  value={newStudent.g_address}
+                  value={editStudent.g_address}
                   onChange={(e) => handleInputChange("g_address", e.target.value)}
                 />
               </Grid>
@@ -125,7 +115,7 @@ export default function RegisterForm() {
                   label="Contact"
                   variant="outlined"
                   fullWidth
-                  value={newStudent.g_contact}
+                  value={editStudent.g_contact}
                   onChange={(e) => handleInputChange("g_contact", e.target.value)}
                 />
               </Grid>
@@ -143,8 +133,8 @@ export default function RegisterForm() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleRegister}>Register</Button>
-          <Button onClick={handleClose}>Clear</Button>
+          <Button onClick={handleUpdate}>Update</Button>
+          <Button onClick={onClose}>Clear</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>
